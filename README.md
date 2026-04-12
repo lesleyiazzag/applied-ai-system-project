@@ -2,6 +2,12 @@
 
 ![Music Recommender Simulation Image](musicrecommender.jpg)
 
+![Music Recommender Simulation Image](music_lofi_output.jpg)
+
+![Music Recommender Simulation Image](music_pop_output.jpg)
+
+![Music Recommender Simulation Image](music_rock_output.jpg)
+
 ## Project Summary
 
 In this project you will build and explain a small music recommender system.
