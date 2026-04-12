@@ -141,6 +141,41 @@ Describe your scoring logic in plain language.
 Try to avoid code in this section, treat it like an explanation to a non programmer.
 
 ---
+Real-world recommendation systems (like Spotify or YouTube) predict what users will enjoy by combining patterns in user behavior with features of the content itself. They look at both what similar users like and what makes each song unique (such as energy, mood, or genre). My simplified version focuses on content-based filtering, meaning it recommends songs based on how similar they are to a user’s stated preferences rather than relying on other users.
+
+This system considers features such as genre, mood, energy, valence, and danceability. The user provides a profile with their preferred genre, mood, and target values for numerical features like energy and valence. For each song, the system compares these features to the user’s preferences. It rewards songs that match the user’s genre and mood, and gives higher scores to songs whose numerical features are closer to the user’s target values.
+
+Each song is assigned a score based on these comparisons. Songs with the highest scores are ranked at the top and recommended to the user.
+
+Features Used:
+
+Song object:
+genre (categorical)
+mood (categorical)
+energy (0–1)
+valence (0–1)
+danceability (0–1)
+tempo_bpm (numeric, supporting feature)
+acousticness (0–1)
+UserProfile object:
+favorite_genre
+favorite_mood
+target_energy
+target_valence
+target_danceability
+
+Algorithm Recipe:
+
++2.0 points for genre match
++1.5 points for mood match
++2.0 × (1 − |song_energy − target_energy|)
++2.0 × (1 − |song_valence − target_valence|)
++1.0 × (1 − |song_danceability − target_danceability|)
+
+Songs are scored individually using this formula, then ranked from highest to lowest score to produce the final recommendations.
+
+Potential Bias:
+This system may over-prioritize genre and mood, which could limit discovery of songs outside the user’s usual preferences, even if they match the desired vibe.
 
 ## 4. Data
 
