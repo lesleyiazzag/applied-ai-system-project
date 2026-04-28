@@ -1,145 +1,115 @@
-# 🎧 Model Card: Music Recommender Simulation
+# 🎧 Model Card: Music Recommender Simulation + Reliability System
 
-## 1. Model Name  
+## 1. Model Name
 
-Give your model a short, descriptive name.  
-Example: **VibeFinder 1.0**  
-
----
-VibeMatch 1.0
-
-## 2. Intended Use  
-
-Describe what your recommender is designed to do and who it is for. 
-
-Prompts:  
-
-- What kind of recommendations does it generate  
-- What assumptions does it make about the user  
-- Is this for real users or classroom exploration  
+VibeMatch 1.0 (Extended with Reliability Testing)
 
 ---
-This model recommends songs to a user based on their preferences. It tries to find songs with a similar “vibe” using features like genre, mood, and energy.
 
-## 3. How the Model Works  
+## 2. Intended Use
 
-Explain your scoring approach in simple language.  
+This system is designed to recommend songs based on a user’s preferences for genre, mood, and musical features such as energy and danceability.
 
-Prompts:  
+It is intended for educational use only and demonstrates how simple recommendation systems work using rule-based scoring rather than machine learning models.
 
-- What features of each song are used (genre, energy, mood, etc.)  
-- What user preferences are considered  
-- How does the model turn those into a score  
-- What changes did you make from the starter logic  
-
-Avoid code here. Pretend you are explaining the idea to a friend who does not program.
+The system assumes users have stable preferences that can be represented as structured numerical and categorical inputs.
 
 ---
-Each song is given a score based on how well it matches the user’s preferences. The model gives points for matching genre and mood. It also compares numerical features like energy and gives higher scores to songs that are closer to the user’s target value. Songs are then ranked from highest to lowest score, and the top results are recommended.
 
-## 4. Data  
+## 3. How the Model Works
 
-Describe the dataset the model uses.  
+The recommender assigns a score to each song based on how well it matches a user’s preferences.
 
-Prompts:  
+It uses:
+- Genre and mood matching (categorical signals)
+- Numerical similarity for features like energy, valence, and danceability
+- Weighted scoring to combine these signals into a final ranking
 
-- How many songs are in the catalog  
-- What genres or moods are represented  
-- Did you add or remove data  
-- Are there parts of musical taste missing in the dataset  
+Songs are sorted by total score, and the highest-ranked items are returned as recommendations.
 
----
-The dataset contains 18 songs with features including genre, mood, energy, tempo, valence, danceability, and acoustics. The dataset is small and not very diverse, which limits the variety of recommendations.
-
-## 5. Strengths  
-
-Where does your system seem to work well  
-
-Prompts:  
-
-- User types for which it gives reasonable results  
-- Any patterns you think your scoring captures correctly  
-- Cases where the recommendations matched your intuition  
+A consistency testing system checks whether repeated runs with the same input produce identical rankings.
 
 ---
-This system works well when user preferences are clear and consistent. For example, it performs well for profiles like "Chill Lofi" and "Intense Rock," where genre, mood, and energy all align. In these cases, the model correctly ranks songs that match both the emotional tone and intensity of the user’s input.
 
-The scoring system is especially good at capturing energy-based similarity, which helps it distinguish between calm and high-intensity music. It also reliably prioritizes songs that match multiple features at once, which leads to reasonable top recommendations in most cases.
+## 4. Data
 
-## 6. Limitations and Bias 
+The dataset contains 18 songs stored in a CSV file.
 
-Where the system struggles or behaves unfairly. 
+Each song includes:
+- genre
+- mood
+- energy
+- valence
+- danceability
+- tempo
+- acousticness
 
-Prompts:  
-
-- Features it does not consider  
-- Genres or moods that are underrepresented  
-- Cases where the system overfits to one preference  
-- Ways the scoring might unintentionally favor some users  
-
----
-One key limitation of this system is that it over-prioritizes energy, especially after increasing its weight in the scoring formula. This is evident in the results, where songs like "Gym Hero" and "Neon Nights" appear across multiple profiles, even when they do not match the user’s preferred genre or mood.
-
-For example, in the "Conflicting Vibe" profile (high energy but sad mood), the system recommends mostly high-energy songs and completely ignores the mood preference. This shows that the model struggles to balance conflicting features and defaults to the strongest numerical signal.
-
-Additionally, because the dataset is relatively small, the system repeatedly recommends the same songs across different profiles. This creates a limited recommendation space and reduces diversity.
-
-Overall, the system is biased toward numerical similarity (especially energy), which can lead to less accurate recommendations when emotional or categorical features like mood and genre are more important.
-
-## 7. Evaluation  
-
-How you checked whether the recommender behaved as expected. 
-
-Prompts:  
-
-- Which user profiles you tested  
-- What you looked for in the recommendations  
-- What surprised you  
-- Any simple tests or comparisons you ran  
-
-No need for numeric metrics unless you created some.
+The dataset is small and stylistically limited, which restricts diversity in recommendations.
 
 ---
-I tested the recommender system using multiple user profiles, including "High-Energy Pop," "Chill Lofi," "Intense Rock," and an edge case called "Conflicting Vibe."
 
-After increasing the weight of energy and reducing the importance of genre, the recommendations became more focused on matching intensity rather than category. For example, in the "High-Energy Pop" profile, songs like "Storm Runner" and "Neon Nights" ranked highly even though they are not pop songs, simply because their energy levels closely matched the user’s preference.
+## 5. Reliability and Testing Behavior
 
-For the "Chill Lofi" profile, the system still performed well, with "Library Rain" and "Midnight Coding" ranking highest due to strong matches across all features. However, songs that only matched energy (but not genre or mood) began to appear more frequently in the top results.
+A reliability testing system was added to evaluate whether the recommender produces consistent outputs.
 
-The most noticeable issue appeared in the "Conflicting Vibe" profile. Even though the user specified a mood of "sad," none of the top recommendations reflected that mood. Instead, the system prioritized high-energy songs, showing that energy dominates the scoring logic and can override other important features.
+It works by:
+- Running the recommendation function on fixed inputs
+- Checking whether rankings remain identical across runs
+- Logging results of each evaluation
 
-Overall, the system became more consistent in matching energy but less accurate in capturing the full “vibe” of the user. This experiment demonstrates how increasing the weight of a single feature can reduce the system’s ability to balance multiple aspects of user preference.
+During development, a small randomness factor was temporarily introduced to test whether the system could detect inconsistencies. The tester successfully identified unstable behavior, confirming that the evaluation system works as intended.
 
-## 8. Future Work  
-
-Ideas for how you would improve the model next.  
-
-Prompts:  
-
-- Additional features or preferences  
-- Better ways to explain recommendations  
-- Improving diversity among the top results  
-- Handling more complex user tastes  
+After removing randomness, the system returned to fully deterministic behavior.
 
 ---
-There are several ways this model could be improved. One improvement would be to add more songs and more diverse genres to reduce repetition and improve recommendation variety. Another improvement would be to balance feature weights more carefully so that no single feature (like energy) dominates the scoring system.
 
-The model could also include additional user preferences, such as listening history or skip behavior, to make recommendations more personalized. Finally, adding a diversity rule in the ranking step could help ensure that the top results are not too similar to each other.
+## 6. Limitations and Biases
 
-## 9. Personal Reflection  
+This system has several limitations:
 
-A few sentences about your experience.  
+- It relies on a small dataset, which limits recommendation diversity
+- It is heavily influenced by manually chosen feature weights
+- Energy tends to dominate scoring, sometimes overriding mood or genre
+- It does not learn from user feedback or adapt over time
 
-Prompts:  
+As a result, recommendations can become repetitive or overly narrow.
 
-- What you learned about recommender systems  
-- Something unexpected or interesting you discovered  
-- How this changed the way you think about music recommendation apps  
+---
 
-The biggest learning moment in this project was realizing how sensitive recommender systems are to feature weighting. Small changes, especially increasing the importance of energy, completely changed the ranking results and often outweighed genre or mood. This helped me understand that “intelligence” in these systems often comes from carefully tuned rules rather than complex logic.
+## 7. Safety, Misuse, and Ethical Considerations
 
-Using AI tools like Copilot helped me quickly write and debug code, especially for functions like scoring and sorting songs. However, I had to double-check the AI’s suggestions when it came to how features were combined and weighted, because small mistakes or overly simplified logic could lead to unrealistic recommendations.
+Although this system is low-risk, real-world recommender systems built this way could unintentionally reinforce preference loops.
 
-What surprised me most was how even a simple scoring system could feel like it was making meaningful recommendations. Even without machine learning, the combination of genre, mood, and energy was enough to produce results that felt personalized and realistic in many cases.
+This means users might only see similar types of content repeatedly, reducing exposure to diverse recommendations.
 
-If I extended this project, I would add user interaction data such as likes, skips, or listening history to make the recommendations more dynamic. I would also try building a hybrid system that combines content-based filtering with collaborative filtering to better simulate real-world recommendation platforms.
+To prevent this in production systems, techniques such as:
+- diversity constraints
+- fairness adjustments
+- feedback-based learning
+
+would be necessary.
+
+---
+
+## 8. AI Collaboration Reflection
+
+AI tools such as Copilot Chat were used to assist in designing scoring logic and structuring feature comparisons.
+
+One helpful suggestion was using normalized distance scoring (e.g., 1 - |difference|) for numerical features like energy and valence, which improved how similarity was calculated.
+
+However, one incorrect suggestion from AI was simplifying all feature weights equally, which reduced recommendation quality by over-prioritizing categorical features and ignoring meaningful numerical differences. This had to be manually corrected.
+
+This highlights the importance of validating AI-generated code rather than accepting it directly.
+
+---
+
+## 9. Overall Reflection
+
+This project demonstrated that recommendation systems are not only about generating outputs, but also about ensuring those outputs are stable, interpretable, and meaningful.
+
+I learned that:
+- Small changes in weighting can significantly affect recommendations
+- Reliability testing is essential even for simple rule-based systems
+- Deterministic output does not guarantee good or diverse recommendations
+
+If extended, I would incorporate feedback loops or embedding-based similarity methods to improve personalization and reduce manual bias in scoring.

@@ -9,11 +9,12 @@ You will implement the functions in recommender.py:
 - recommend_songs
 """
 
-from recommender import load_songs, recommend_songs
-
+# from recommender import load_songs, recommend_songs
+from src.recommender import load_songs, recommend_songs
+from src.recommender import consistency_test
 
 def main() -> None:
-    songs = load_songs("../data/songs.csv") 
+    songs = load_songs("data/songs.csv") 
 
     # Starter example profile
     # user_prefs = {"genre": "pop", "mood": "happy", "energy": 0.8}
@@ -35,6 +36,9 @@ def main() -> None:
 
     for name, prefs in user_profiles.items():
         print(f"\n=== {name} ===\n")
+
+        # 🧪 CONSISTENCY TEST (NEW AI FEATURE)
+        consistency_test(prefs, songs)
 
         recommendations = recommend_songs(prefs, songs, k=5)
 

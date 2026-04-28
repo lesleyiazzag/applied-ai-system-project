@@ -74,6 +74,7 @@ def load_songs(csv_path: str) -> List[Dict]:
     print(f"Loaded songs: {len(songs)}")
     return songs
 
+import random
 def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
     """
     Scores a single song against user preferences.
@@ -98,6 +99,7 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
     energy_diff = abs(song["energy"] - user_prefs["energy"])
     energy_score = 4.0 * (1 - energy_diff)
     score += energy_score
+    score += random.random() * 0.01
     reasons.append(f"energy similarity (+{energy_score:.2f})")
 
     return score, reasons
@@ -121,3 +123,21 @@ def recommend_songs(user_prefs: Dict, songs: List[Dict], k: int = 5) -> List[Tup
     scored_songs = sorted(scored_songs, key=lambda x: x[1], reverse=True)
 
     return scored_songs[:k]
+
+def consistency_test(user_prefs: Dict, songs: List[Dict]) -> bool:
+    """
+    Checks whether the recommender is stable and deterministic.
+    """
+
+    print(f"[LOG] Testing consistency for {len(songs)} songs...")
+
+    run1 = recommend_songs(user_prefs, songs, k=5)
+    run2 = recommend_songs(user_prefs, songs, k=5)
+
+    for (s1, score1, _), (s2, score2, _) in zip(run1, run2):
+        if s1["id"] != s2["id"] or abs(score1 - score2) > 1e-6:
+            print("⚠️ Inconsistency detected in recommender output!")
+            return False
+
+    print("✅ Consistency check passed.")
+    return True

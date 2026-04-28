@@ -1,254 +1,134 @@
-# 🎵 Music Recommender Simulation
+# 🎵 Music Recommender Simulation + Reliability Testing System
 
-![Music Recommender Simulation Image](musicrecommender.jpg)
-
-![Music Recommender Simulation Image](music_lofi_output.jpg)
-
-![Music Recommender Simulation Image](music_pop_output.jpg)
-
-![Music Recommender Simulation Image](music_rock_output.jpg)
-
-## Project Summary
-
-In this project you will build and explain a small music recommender system.
-
-Your goal is to:
-
-- Represent songs and a user "taste profile" as data
-- Design a scoring rule that turns that data into recommendations
-- Evaluate what your system gets right and wrong
-- Reflect on how this mirrors real world AI recommenders
-
-Replace this paragraph with your own summary of what your version does.
+Loom Video Walkthrough Link - https://www.loom.com/share/10aeeb46485649b081d685bef706d88a
 
 ---
 
-## How The System Works
+## 1. Original Project (Modules 1–3)
 
-Explain your design in plain language.
+The original project was a Music Recommender Simulation that demonstrates how recommendation systems can rank items using structured data. It used a rule-based scoring system to match songs to a user’s preferences based on features like genre, mood, and energy.
 
-Some prompts to answer:
-
-- What features does each `Song` use in your system
-  - For example: genre, mood, energy, tempo
-- What information does your `UserProfile` store
-- How does your `Recommender` compute a score for each song
-- How do you choose which songs to recommend
-
-You can include a simple diagram or bullet list if helpful.
+The goal was to model simplified versions of real-world systems like Spotify or YouTube, where content is ranked based on feature similarity and weighted scoring rather than deep learning models.
 
 ---
 
-## Getting Started
+## 2. Project Summary
 
-### Setup
+This extended version builds a **Reliability and Consistency Testing System** on top of the original recommender.
 
-1. Create a virtual environment (optional but recommended):
+The system:
+- Generates ranked music recommendations
+- Tests whether outputs are consistent across repeated runs
+- Logs system behavior for debugging and validation
 
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate      # Mac or Linux
-   .venv\Scripts\activate         # Windows
+This makes the system closer to real AI pipelines, where correctness alone is not enough — reliability and repeatability are also required.
 
-2. Install dependencies
+---
 
+## 3. Architecture Overview
+
+The system follows this pipeline:
+
+User Input → Load Songs (CSV) → Scoring Function → Ranking Function → Consistency Tester → Logging → Output to User
+
+### System Diagram
+See: `/assets/system_architecture.png`
+
+### Key Components:
+- **Loader**: Reads song data from CSV
+- **Scoring Function**: Computes preference match score
+- **Ranking Function**: Sorts songs by score
+- **Consistency Tester**: Verifies deterministic outputs
+- **Logger**: Tracks system execution and validation steps
+
+---
+
+## 4. Setup Instructions
+
+### 1. Clone the repository
 ```bash
-pip install -r requirements.txt
-```
+git clone https://github.com/lesleyiazzag/applied-ai-system-project.git
+cd applied-ai-system-project
 
-3. Run the app:
-
+### 2. Run the program
 ```bash
 python -m src.main
-```
 
-### Running Tests
-
-Run the starter tests with:
-
-```bash
-pytest
-```
-
-You can add more tests in `tests/test_recommender.py`.
+### 3. Run reliability tests
+python -m pytest
 
 ---
+## Sample Interactions
+Example 1: High Energy Pop User
 
-## Experiments You Tried
+user_prefs = {
+    "genre": "pop",
+    "mood": "happy",
+    "energy": 0.9
+}
 
-Use this section to document the experiments you ran. For example:
+Output:
+Song A — Score: 8.7 (genre + mood + energy match)
+Song B — Score: 8.1 (partial energy match)
 
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
+Example 2: Chill Listener
 
----
+user_prefs = {
+    "genre": "lofi",
+    "mood": "calm",
+    "energy": 0.2
+}
 
-## Limitations and Risks
-
-Summarize some limitations of your recommender.
-
-Examples:
-
-- It only works on a tiny catalog
-- It does not understand lyrics or language
-- It might over favor one genre or mood
-
-You will go deeper on this in your model card.
-
----
-
-## Reflection
-
-Read and complete `model_card.md`:
-
-[**Model Card**](model_card.md)
-
-Write 1 to 2 paragraphs here about what you learned:
-
-- about how recommenders turn data into predictions
-- about where bias or unfairness could show up in systems like this
-
+Output:
+Chill Beats — Score: 9.2
+Soft Waves — Score: 8.8
 
 ---
+### Design Decisions
+A weighted scoring system was used because it is interpretable and closely mirrors early-stage recommendation systems.
 
-## 7. `model_card_template.md`
+Genre and mood were weighted more heavily than numerical features because they represent stronger categorical signals.
 
-Combines reflection and model card framing from the Module 3 guidance. :contentReference[oaicite:2]{index=2}  
-
-```markdown
-# 🎧 Model Card - Music Recommender Simulation
-
-## 1. Model Name
-
-Give your recommender a name, for example:
-
-> VibeFinder 1.0
+Trade-offs:
+Simplicity vs realism (no ML models used)
+Interpretability vs personalization depth
 
 ---
+### Testing Approach
+This project includes a built-in reliability testing system that checks whether the recommender produces consistent outputs for the same user preferences.
 
-## 2. Intended Use
+A consistency test is automatically run for each user profile. The system:
+- Runs the recommendation function twice on the same input
+- Compares ranked outputs and scores
+- Flags any differences in ordering or scoring
 
-- What is this system trying to do
-- Who is it for
+In addition, a logging system records when tests are executed.
 
-Example:
+To validate the reliability system, a temporary randomness factor was introduced into the scoring function. This caused inconsistency detection to trigger, confirming that the tester successfully identifies unstable outputs. After removing the randomness, the system returned to fully deterministic behavior.
 
-> This model suggests 3 to 5 songs from a small catalog based on a user's preferred genre, mood, and energy level. It is for classroom exploration only, not for real users.
+### Results Summary
+- 4 user profiles were tested: High-Energy Pop, Chill Lofi, Intense Rock, and Conflicting Vibe
+- The consistency test passed for all runs (no mismatches detected)
+- The recommender produced stable rankings across repeated executions
+- Log output confirmed test execution for each profile:
+  - `[LOG] Testing consistency for 18 songs...`
+  - `✅ Consistency check passed.`
 
----
+    ### Observations
+    - The system is deterministic: identical inputs always produce identical rankings
+    - Energy similarity heavily influences ranking stability
+    - Genre and mood matching help differentiate top results, but energy remains the dominant factor
 
-## 3. How It Works (Short Explanation)
+    ### What Worked Well
+    - Ranking order remained stable across repeated runs
+    - No inconsistencies were detected in scoring or sorting
+    - Logging successfully tracked evaluation steps
 
-Describe your scoring logic in plain language.
-
-- What features of each song does it consider
-- What information about the user does it use
-- How does it turn those into a number
-
-Try to avoid code in this section, treat it like an explanation to a non programmer.
-
----
-Real-world recommendation systems (like Spotify or YouTube) predict what users will enjoy by combining patterns in user behavior with features of the content itself. They look at both what similar users like and what makes each song unique (such as energy, mood, or genre). My simplified version focuses on content-based filtering, meaning it recommends songs based on how similar they are to a user’s stated preferences rather than relying on other users.
-
-This system considers features such as genre, mood, energy, valence, and danceability. The user provides a profile with their preferred genre, mood, and target values for numerical features like energy and valence. For each song, the system compares these features to the user’s preferences. It rewards songs that match the user’s genre and mood, and gives higher scores to songs whose numerical features are closer to the user’s target values.
-
-Each song is assigned a score based on these comparisons. Songs with the highest scores are ranked at the top and recommended to the user.
-
-Features Used:
-
-Song object:
-genre (categorical)
-mood (categorical)
-energy (0–1)
-valence (0–1)
-danceability (0–1)
-tempo_bpm (numeric, supporting feature)
-acousticness (0–1)
-UserProfile object:
-favorite_genre
-favorite_mood
-target_energy
-target_valence
-target_danceability
-
-Algorithm Recipe:
-
-+2.0 points for genre match
-+1.5 points for mood match
-+2.0 × (1 − |song_energy − target_energy|)
-+2.0 × (1 − |song_valence − target_valence|)
-+1.0 × (1 − |song_danceability − target_danceability|)
-
-Songs are scored individually using this formula, then ranked from highest to lowest score to produce the final recommendations.
-
-Potential Bias:
-This system may over-prioritize genre and mood, which could limit discovery of songs outside the user’s usual preferences, even if they match the desired vibe.
-
-## 4. Data
-
-Describe your dataset.
-
-- How many songs are in `data/songs.csv`
-- Did you add or remove any songs
-- What kinds of genres or moods are represented
-- Whose taste does this data mostly reflect
+    ### Issues Observed
+    - Some songs repeatedly appear across multiple profiles due to strong energy similarity
+    - The system is sensitive to dataset size, which limits diversity in outputs
 
 ---
+### Reflection
 
-## 5. Strengths
-
-Where does your recommender work well
-
-You can think about:
-- Situations where the top results "felt right"
-- Particular user profiles it served well
-- Simplicity or transparency benefits
-
----
-
-## 6. Limitations and Bias
-
-Where does your recommender struggle
-
-Some prompts:
-- Does it ignore some genres or moods
-- Does it treat all users as if they have the same taste shape
-- Is it biased toward high energy or one genre by default
-- How could this be unfair if used in a real product
-
----
-
-## 7. Evaluation
-
-How did you check your system
-
-Examples:
-- You tried multiple user profiles and wrote down whether the results matched your expectations
-- You compared your simulation to what a real app like Spotify or YouTube tends to recommend
-- You wrote tests for your scoring logic
-
-You do not need a numeric metric, but if you used one, explain what it measures.
-
----
-
-## 8. Future Work
-
-If you had more time, how would you improve this recommender
-
-Examples:
-
-- Add support for multiple users and "group vibe" recommendations
-- Balance diversity of songs instead of always picking the closest match
-- Use more features, like tempo ranges or lyric themes
-
----
-
-## 9. Personal Reflection
-
-A few sentences about what you learned:
-
-- What surprised you about how your system behaved
-- How did building this change how you think about real music recommenders
-- Where do you think human judgment still matters, even if the model seems "smart"
-
+This project helped me understand how recommendation systems translate structured data into ranked predictions. Even simple recommendation systems require reliability testing to ensure consistent behavior. This implementation demonstrates that deterministic scoring and sorting can produce stable outputs, but also highlights how dataset limitations and feature weighting affect perceived recommendation quality.
