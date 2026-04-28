@@ -132,3 +132,11 @@ To validate the reliability system, a temporary randomness factor was introduced
 ### Reflection
 
 This project helped me understand how recommendation systems translate structured data into ranked predictions. Even simple recommendation systems require reliability testing to ensure consistent behavior. This implementation demonstrates that deterministic scoring and sorting can produce stable outputs, but also highlights how dataset limitations and feature weighting affect perceived recommendation quality.
+
+## Portfolio Reflection
+
+This project demonstrates my ability to design and implement a complete AI system from data processing to evaluation. I built a recommendation engine, then extended it with a reliability testing layer to ensure the system behaves consistently and predictably.
+
+It shows that I can go beyond making a model “work” and instead think about system-level concerns such as testing, logging, and failure cases. I also learned how small design choices, such as feature weighting, can significantly affect outputs.
+
+Overall, this project reflects my ability to build structured AI pipelines, evaluate their behavior, and iterate on system reliability in a way that aligns with real-world engineering practices.
